@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A backend project from Chai aur Code",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,5 +13,8 @@
     "chai"
   ],
   "author": "Arghya Chatterjee",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
 }
