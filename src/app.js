@@ -29,4 +29,14 @@ app.use(express.static("public"));
 // Cookie-Parser allows us to perform CRUD operations on User Cookies
 app.use(cookieParser());
 
+// Importing User Routes is done after declaring Middlewares
+import userRouter from "./routes/user.routes.js";
+
+// Using Middlewares to modularise our code
+// Whenever user visits the URL "/users", we will activate userRouter and then we will use the corresponding controller
+// URL looks like: "https::localhost:8000/api/v1/users"
+// /api/v1/users --> Now becomes our BASE URL or Home-Page for userRouter
+// Standard practice is to use /api/version-number as the
+app.use("/api/v1/users", userRouter);
+
 export { app };
