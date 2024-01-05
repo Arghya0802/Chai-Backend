@@ -20,12 +20,11 @@ const userSchema = new Schema(
         fullName: {
             type: String,
             required: true,
-            unique: true,
             lowercase: true,
             index: true, // Costly operation to make any field easily searchable
         },
         avatar: {
-            type: String, // Cloudniary URL storing all our Images and Videos
+            type: String, // Cloudinary URL storing all our Images and Videos
             required: true,
         },
         coverImage: {
@@ -39,7 +38,7 @@ const userSchema = new Schema(
         ],
         password: {
             type: String,
-            required: [true, "Password is required"],
+            required: [true, "Password is required MODEL"],
         },
         refreshToken: {
             type: String,
@@ -61,7 +60,7 @@ userSchema.pre("save", async function (next) {
 
 // isPasswordCorrect is our own custom Password Checker
 userSchema.methods.isPasswordCorrect = async function (password) {
-    // Bcrypt.compar() checks between our plainTextPassword & EncryptedPassword and returns true if they are true else returns false
+    // Bcrypt.compare() checks between our plainTextPassword & EncryptedPassword and returns true if they are true else returns false
     return await bcrypt.compare(password, this.password);
 };
 

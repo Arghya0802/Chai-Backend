@@ -4,7 +4,8 @@ import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-const userRegister = asyncHandler(async (req, res, next) => {
+const userRegister = asyncHandler(async (req, res) => {
+    // Algorithm
     // Take data from User (frontend)
     // Check if data send is correct or not - Empty Field Check
     // Check if user already exists or not
@@ -21,14 +22,14 @@ const userRegister = asyncHandler(async (req, res, next) => {
     // Arrays.some() is specifically used to check for validation very easily
     if (
         [username, fullName, email, password].some(
-            (field) => field.trim() === ""
+            (field) => field?.trim() === ""
         )
     ) {
         throw new ApiError(400, "Empty Fields are not allowed");
     }
 
     // findOne({query})  returns the first Object that matches the query
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{ username }, { email }],
     });
 
@@ -40,7 +41,18 @@ const userRegister = asyncHandler(async (req, res, next) => {
     // Middlewares, in general, add more options to our Response-body
     // Multer gives us the option to files that has been uploaded temporarily into our local server
     const avatarLocalFilePath = req.files?.avatar[0]?.path;
-    const coverImageLocalFilePath = req.files?.coverImage[0]?.path;
+    // const coverImageLocalFilePath = req.files?.coverImage[0]?.path;
+
+    // Checking if Cover-Image has been uploaded by User or not
+    let coverImageLocalFilePath = "";
+    if (
+        req.files &&
+        Array.isArray(req.files.coverImage) &&
+        req.files.coverImage.length > 0
+    ) {
+        coverImageLocalFilePath = req.files.coverImage[0].path;
+    }
+    // console.log(coverImageLocalFilePath);
 
     // Avatar-Image is neccessary for our application
     if (!avatarLocalFilePath) {
@@ -54,6 +66,7 @@ const userRegister = asyncHandler(async (req, res, next) => {
     if (!avatar) {
         throw ApiError(400, "Avatar Image is compulsory");
     }
+    // console.log(coverImage);
 
     // We create an object in MongoDB using create({object}) method
     // Since DB is in different continent, we always use async-await for any interaction with the DB
@@ -62,8 +75,9 @@ const userRegister = asyncHandler(async (req, res, next) => {
     const user = await User.create({
         fullName,
         avatar: avatar.url,
-        coverImage: coverImage.url || "",
+        coverImage: coverImage === null ? "" : coverImage.url,
         email,
+        password,
         username: username.toLowerCase(),
     });
 
@@ -83,7 +97,7 @@ const userRegister = asyncHandler(async (req, res, next) => {
     // If everything went successfully, we can now send the response back confirming that the User has been successfully registered!!!
     res.status(200).json(
         new ApiResponse(
-            201,
+            200,
             newUser,
             "User has been registered Successfully!!!"
         )
