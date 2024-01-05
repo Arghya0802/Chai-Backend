@@ -48,6 +48,8 @@ const userSchema = new Schema(
     { timestamps: true }
 );
 
+// We don't use Arrow-function here because we need to use this keyword to know about the current context of variables as we are saving the data
+
 // Pre() is a middleware which we use just before User Saves data [just before anything to be precise]
 userSchema.pre("save", async function (next) {
     // We should encrypt our password only when our password is entered first-time or updated again
