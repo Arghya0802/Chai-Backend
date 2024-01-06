@@ -18,6 +18,7 @@ const userRegister = asyncHandler(async (req, res) => {
     // In request-body, we get all the data in the form of JSON entered by the user through forms [Not through URL]
     // File Handling is done seperately in user.routes.js
     const { username, fullName, email, password } = req.body;
+    console.log(`${username}, ${fullName}, ${email}, ${password} \n`);
 
     // Arrays.some() is specifically used to check for validation very easily
     if (
@@ -44,7 +45,7 @@ const userRegister = asyncHandler(async (req, res) => {
     // const coverImageLocalFilePath = req.files?.coverImage[0]?.path;
 
     // Checking if Cover-Image has been uploaded by User or not
-    let coverImageLocalFilePath = "";
+    let coverImageLocalFilePath;
     if (
         req.files &&
         Array.isArray(req.files.coverImage) &&
@@ -52,7 +53,7 @@ const userRegister = asyncHandler(async (req, res) => {
     ) {
         coverImageLocalFilePath = req.files.coverImage[0].path;
     }
-    // console.log(coverImageLocalFilePath);
+    console.log(`${coverImageLocalFilePath} and ${avatarLocalFilePath} \n`);
 
     // Avatar-Image is neccessary for our application
     if (!avatarLocalFilePath) {
@@ -66,7 +67,7 @@ const userRegister = asyncHandler(async (req, res) => {
     if (!avatar) {
         throw ApiError(400, "Avatar Image is compulsory");
     }
-    // console.log(coverImage);
+    console.log(`${coverImage} and ${avatar}\n`);
 
     // We create an object in MongoDB using create({object}) method
     // Since DB is in different continent, we always use async-await for any interaction with the DB
@@ -75,7 +76,7 @@ const userRegister = asyncHandler(async (req, res) => {
     const user = await User.create({
         fullName,
         avatar: avatar.url,
-        coverImage: coverImage === null ? "" : coverImage.url,
+        coverImage: coverImage ? coverImage.url : "",
         email,
         password,
         username: username.toLowerCase(),
